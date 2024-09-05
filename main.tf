@@ -23,3 +23,7 @@ resource "aws_subnet" "public_subnet_2" {
   availability_zone = "${var.region}b"
 }
 
+# Create an Internet Gateway
+resource "aws_internet_gateway" "fargate_igw" {
+  vpc_id = aws_vpc.fargate_vpc.id
+}
