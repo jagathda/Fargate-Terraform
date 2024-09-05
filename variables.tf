@@ -22,3 +22,8 @@ variable "cluster_name" {
   description = "ECS cluster name"
   default     = "Fargate_Cluster"
 }
+
+variable "nginx_image" {
+  description = "Docker image for the NGINX container"
+  default     = "nginx:latest"
+}
