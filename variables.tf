@@ -17,3 +17,8 @@ variable "public_subnet_cidr_2" {
   description = "Public subnet CIDR block 2"
   default     = "10.0.2.0/24"
 }
+
+variable "cluster_name" {
+  description = "ECS cluster name"
+  default     = "Fargate_Cluster"
+}
