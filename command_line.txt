@@ -1,0 +1,46 @@
+#Create a cluster via the CLI:
+aws ecs create-cluster --cluster-name FargateCluster
+
+
+#Create a task definition JSON file (nginx-task-definition.json):
+{
+  "family": "nginx-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "containerDefinitions": [
+    {
+      "name": "nginx",
+      "image": "nginx:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "protocol": "tcp"
+        }
+      ]
+    }
+  ]
+}
+
+#Create the task definition:
+aws ecs register-task-definition --cli-input-json file://nginx-task-definition.json
+
+
+#Create the security group:
+aws ec2 create-security-group --group-name FargateSG --description "Security group for Fargate tasks" --vpc-id <your-vpc-id>
+
+
+#Allow inbound HTTP traffic on port 80:
+aws ec2 authorize-security-group-ingress --group-id <your-security-group-id> --protocol tcp --port 80 --cidr 0.0.0.0/0
+
+
+#Attach the Security Group to the Fargate Service
+aws ecs create-service \
+    --cluster FargateCluster \
+    --service-name nginx-service \
+    --task-definition nginx-task \
+    --launch-type FARGATE \
+    --desired-count 1 \
+    --network-configuration "awsvpcConfiguration={subnets=[subnet-xxxxxx],securityGroups=[sg-xxxxxx],assignPublicIp=ENABLED}"
